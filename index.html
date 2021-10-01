@@ -14,14 +14,17 @@
             <div class="logo">Интернет-магазин</div>
             <div class="cart">
                 <form action="#" class="search-form">
-                    <input type="text" class="search-field">
-                    <button class="btn-search" type="submit">
+                    <input type="text" class="search-field" v-model="value">
+                    <button class="btn-search" type="submit" @click="filter(value)">
                         <i class="fas fa-search"></i>
                     </button>
                 </form>
-                <button class="btn-cart" type="button">Корзина</button>
-                <div class="cart-block ">
-                    <div class="cart-item" v-for="addToBasket of addToBaskets" :key="addToBasket.id_product">
+                <button class="btn-cart" type="button" @click="show = !show">Корзина</button>
+                <div class="cart-block" v-show="show">
+                    <div class="cart-item" v-if="addToBaskets.length == 0">
+                        <p>Нет данных</p>
+                    </div>
+                    <div class="cart-item" v-else v-for="addToBasket of addToBaskets" :key="addToBasket.id_product">
                         <div class="product-bio" :id="addToBasket.id_product">
                             <img :src="imgCart" alt="Some image">
                             <div class="product-desc">
@@ -41,7 +44,8 @@
         </header>
         <main>
             <div class="products">
-                <div class="product-item" v-for="product of products" :key="product.id_product">
+                <div v-if="showProducts == 0">Нет данных</div>
+                <div class="product-item" v-for="product of products" :key="product.id_product" v-show="product.show">
                     <img :src="imgCatalog" alt="Some img">
                     <div class="desc">
                         <h3>{{product.product_name}}</h3>
