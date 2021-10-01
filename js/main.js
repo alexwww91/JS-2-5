@@ -8,8 +8,12 @@ const app = new Vue({
     deleteFromBasket: '/deleteFromBasket.json',
     products: [],
     addToBaskets: [],
+    filtered: [],
     imgCatalog: 'https://via.placeholder.com/200x150',
     imgCart: 'https://via.placeholder.com/50x100',
+    value: '',
+    show: false,
+    showProducts: 1,
   },
   methods: {
     getJson(url) {
@@ -28,7 +32,7 @@ const app = new Vue({
         find.quantity++;
       } else {
         good.quantity = 1;
-        this.addToBaskets.push(good);
+        this.addToBaskets.push({ ...good });
       }
     },
     removeProduct(element) {
@@ -46,6 +50,21 @@ const app = new Vue({
             alert('Error');
           }
         })
+    },
+    filter(value) {
+      this.showProducts = this.products.length;
+      const regexp = new RegExp(value, 'i');
+      this.filtered = this.products.filter(product => regexp.test(product.product_name));
+      this.products.forEach(el => {
+        if (!this.filtered.includes(el)) {
+          el.show = false;
+          this.showProducts--;
+        } else {
+          el.show = true;
+          this.showProducts++;
+        }
+        console.log(this.showProducts);
+      })
     }
   },
   computed: {
@@ -58,6 +77,8 @@ const app = new Vue({
     this.getJson(`${API + this.catalogUrl}`)
       .then(data => {
         this.products = data;
+        this.products.map((el) => this.$set(el, "show", true));
+        console.log(this.products);
       });
     this.getJson(`${API + this.addToBasketUrl}`)
       .then(data => {
